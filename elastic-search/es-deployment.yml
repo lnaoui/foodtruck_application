@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: es
+spec:
+  selector:
+    matchLabels:
+      app: es
+  template:
+    metadata:
+      labels:
+        app: es
+    spec:
+      containers:
+      - env:
+        - name: discovery.type
+          value: single-node
+        image: {{.Values.image}}
+        imagePullPolicy: ""
+        name: es
+        ports:
+        - containerPort: 9200
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/data
+          name: esdata1
+      restartPolicy: Always
+      volumes:
+      - name: esdata1
