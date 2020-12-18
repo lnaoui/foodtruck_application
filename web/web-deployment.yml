@@ -1,29 +1,46 @@
+{{- if .Values.dockercfg}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{.Values.name}}-dockercfg
+  annotations:
+    harness.io/skip-versioning: "true"
+data:
+  .dockercfg: {{.Values.dockercfg}}
+type: kubernetes.io/dockercfg
+---
+{{- end}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: es
+  name: web
 spec:
   selector:
     matchLabels:
-      app: es
+      app: web
   template:
     metadata:
       labels:
-        app: es
-    spec:
+        app: web
+    spec:  
       containers:
-      - env:
-        - name: discovery.type
-          value: single-node
+      - args:
+        - sfx-py-trace
+        - app.py
+        env:
+        - name: DEBUG
+          value: "True"
+        - name: SIGNALFX_SERVICE_NAME
+          value: "FoodTruck_Linda"
         image: {{.Values.image}}
-        imagePullPolicy: ""
-        name: es
+        imagePullPolicy: Always
+        name: foodtruck
         ports:
-        - containerPort: 9200
+        - containerPort: 5000
         resources: {}
-        volumeMounts:
-        - mountPath: /usr/share/elasticsearch/data
-          name: esdata1
       restartPolicy: Always
-      volumes:
-      - name: esdata1
+      imagePullSecrets:
+      - name: {{.Values.name}}-dockercfg
+
+
