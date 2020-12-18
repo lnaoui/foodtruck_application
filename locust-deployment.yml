@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust
+spec:
+  selector:
+    matchLabels:
+      app: locust
+  template:
+    metadata:
+      labels:
+        app: locust
+    spec:
+      containers:
+      - image: {{.Values.image}}
+        command: [ "/bin/sh", "-c", "ls /mnt/locust", "-f /mnt/locust/locustfile.py --headless -H http://web:5000 -u 10 -r 1"]
+        imagePullPolicy: ""
+        name: locust
+        ports:
+        - containerPort: 8089
+        resources: {}
+        volumeMounts:
+        - name: locust-volume
+          mountPath: /mnt/locust
+      volumes:
+        - name: locust-volume
+
