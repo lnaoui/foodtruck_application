@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
       - image: {{.Values.image}}
-        command: [ "/bin/sh", "-c", "ls /mnt/locust", "-f /mnt/locust/locustfile.py --headless -H http://web:5000 -u 10 -r 1"]
-        imagePullPolicy: ""
+        imagePullPolicy: "IfNotPresent"
         name: locust
         ports:
         - containerPort: 8089
@@ -24,4 +23,10 @@ spec:
           mountPath: /mnt/locust
       volumes:
         - name: locust-volume
+          configMap:
+            name: locust-config
+            items:
+            - key: "locust"
+              path: "locustfile.py"
+
 

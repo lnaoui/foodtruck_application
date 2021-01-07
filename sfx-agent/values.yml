@@ -1,0 +1,7 @@
+image: ${artifact.metadata.image}
+
+agent: ${configFile.getAsBase64("agent.yaml")}
+traceUrl: ${configFile.getAsString("traceUrl")}
+token: ${configFile.getAsBase64("token")}
+ingestUrl: ${configFile.getAsString("ingestUrl")}
+apiUrl: ${configFile.getAsString("apiUrl")}
