@@ -15,15 +15,37 @@ spec:
       - env:
         - name: discovery.type
           value: single-node
-        image: {{.Values.image}}
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
         imagePullPolicy: ""
         name: es
+        resources:
+          requests:
+            memory: "800Mi"
+            cpu: "100m"
+          limits:
+            memory: "800Mi"
+            cpu: "400m"
         ports:
         - containerPort: 9200
-        resources: {}
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: esdata1
       restartPolicy: Always
       volumes:
       - name: esdata1
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: es
+spec:
+  ports:
+  - name: "9200"
+    port: 9200
+    targetPort: 9200
+  selector:
+    app: es
